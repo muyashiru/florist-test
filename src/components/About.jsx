@@ -8,6 +8,7 @@ const infoItems = [
     ),
     label: 'Alamat',
     value: 'Jl. Cicalengka Raya No.8, Antapani Kidul, Kota Bandung',
+    href: 'https://maps.app.goo.gl/YoGwkwk3kZKQYqru8',
   },
   {
     icon: (
@@ -17,6 +18,7 @@ const infoItems = [
     ),
     label: 'Jam Operasional',
     value: 'Senin – Minggu, 08.30 – 18.30 WIB',
+    href: null,
   },
   {
     icon: (
@@ -26,6 +28,7 @@ const infoItems = [
     ),
     label: 'WhatsApp',
     value: '+62 813-6793-1303',
+    href: 'https://wa.me/6281367931303',
   },
   {
     icon: (
@@ -35,6 +38,7 @@ const infoItems = [
     ),
     label: 'Instagram',
     value: '@jale.floristt',
+    href: 'https://instagram.com/jale.floristt',
   },
 ];
 
@@ -76,17 +80,37 @@ export default function About() {
           {/* Info Cards */}
           <div className="flex flex-col gap-4">
             <h3 className="text-xl font-bold text-charcoal mb-2">Informasi & Kontak</h3>
-            {infoItems.map((item) => (
-              <div key={item.label} className="flex items-start gap-4 p-5 bg-cream rounded-2xl shadow-sm">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-blush flex items-center justify-center text-rose-brand">
-                  {item.icon}
-                </div>
-                <div>
-                  <p className="text-xs font-medium text-muted uppercase tracking-wider mb-1">{item.label}</p>
-                  <p className="text-charcoal font-medium text-sm leading-snug">{item.value}</p>
-                </div>
-              </div>
-            ))}
+            {infoItems.map((item) => {
+              const CardTag = item.href ? 'a' : 'div';
+              return (
+                <CardTag
+                  key={item.label}
+                  href={item.href}
+                  target={item.href ? "_blank" : undefined}
+                  rel={item.href ? "noopener noreferrer" : undefined}
+                  className={`group flex items-center gap-5 p-5 bg-cream rounded-2xl border border-transparent shadow-sm transition-all duration-300 ${
+                    item.href ? 'cursor-pointer hover:-translate-y-1 hover:shadow-md hover:border-rose-brand/30 hover:bg-white' : ''
+                  }`}
+                >
+                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                    item.href ? 'bg-blush text-rose-brand group-hover:bg-rose-brand group-hover:text-white' : 'bg-blush text-rose-brand'
+                  }`}>
+                    {item.icon}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-rose-brand uppercase tracking-widest mb-1">{item.label}</p>
+                    <p className="text-charcoal font-medium text-[15px] leading-snug">{item.value}</p>
+                  </div>
+                  {item.href && (
+                    <div className="text-sand group-hover:text-rose-brand transition-colors duration-300">
+                      <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  )}
+                </CardTag>
+              );
+            })}
           </div>
 
           {/* Google Maps Embed */}
