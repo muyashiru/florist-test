@@ -2,8 +2,21 @@ import { getWhatsAppLink } from '../utils/whatsapp';
 
 export default function ContactPage() {
   return (
-    <section className="py-24 bg-cream min-h-[70vh] flex items-center">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="py-24 bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 min-h-[70vh] flex items-center relative overflow-hidden">
+      {/* --- Ornamen Background --- */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Siluet Bunga Estetik */}
+        <div className="absolute -top-20 -left-10 md:-left-20 text-[20rem] md:text-[28rem] text-rose-300/40 opacity-40 rotate-12 select-none">✿</div>
+        <div className="absolute top-[10%] md:top-[20%] -right-10 md:-right-20 text-[25rem] md:text-[35rem] text-rose-300/30 opacity-30 -rotate-45 select-none">❀</div>
+        <div className="absolute bottom-[-5%] md:bottom-[-10%] left-[5%] md:left-[15%] text-[18rem] md:text-[24rem] text-rose-300/40 opacity-40 rotate-45 select-none">✾</div>
+        
+        {/* Bercak warna (Glow/Ambient Light) */}
+        <div className="absolute top-0 left-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-pink-300/30 rounded-full blur-[80px] md:blur-[100px] mix-blend-multiply"></div>
+        <div className="absolute bottom-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-orange-200/40 rounded-full blur-[100px] md:blur-[120px] mix-blend-multiply"></div>
+      </div>
+      {/* --- End Ornamen --- */}
+
+      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         <p className="text-rose-brand text-sm tracking-[0.25em] uppercase font-medium mb-3">Hubungi Kami</p>
         <h2 className="font-display text-4xl md:text-5xl text-charcoal font-bold mb-6">
           Mari Bicarakan Bunga Impianmu

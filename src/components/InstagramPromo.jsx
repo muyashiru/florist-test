@@ -50,8 +50,40 @@ export default function InstagramPromo() {
         </div>
       </div>
       
-      {/* Dekorasi blur di belakang card */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-72 bg-gradient-to-r from-[#f09433]/10 via-[#e6683c]/10 to-[#bc1888]/10 blur-3xl rounded-full pointer-events-none z-0" />
+      {/* Dekorasi Coquette & Pastel di belakang card */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-80 bg-gradient-to-r from-pink-200/40 via-rose-100/50 to-fuchsia-200/40 blur-3xl rounded-full pointer-events-none z-0" />
+
+      {/* Aksesori Geometris Lembut */}
+      <div className="absolute -top-10 left-10 md:left-20 w-40 h-40 bg-pink-300/20 rounded-full blur-2xl pointer-events-none z-0" />
+      <div className="absolute -bottom-10 right-10 md:right-20 w-48 h-48 bg-rose-300/20 rounded-full blur-2xl pointer-events-none z-0" />
+      
+      {/* Bunga Sakura / Daisy Kiri Atas */}
+      <svg className="absolute top-8 left-6 md:top-16 md:left-20 w-16 h-16 md:w-24 md:h-24 text-pink-300 opacity-60 animate-[spin_15s_linear_infinite] pointer-events-none z-0 drop-shadow-sm" viewBox="0 0 100 100" fill="currentColor">
+        <circle cx="50" cy="25" r="20" />
+        <circle cx="74" cy="42" r="20" />
+        <circle cx="65" cy="70" r="20" />
+        <circle cx="35" cy="70" r="20" />
+        <circle cx="26" cy="42" r="20" />
+        <circle cx="50" cy="50" r="15" fill="#fff" className="opacity-60" />
+      </svg>
+      
+      {/* Bunga Sakura / Daisy Kanan Bawah */}
+      <svg className="absolute bottom-8 right-8 md:bottom-20 md:right-28 w-12 h-12 md:w-20 md:h-20 text-rose-300 opacity-60 animate-[spin_20s_linear_infinite_reverse] pointer-events-none z-0 drop-shadow-sm" viewBox="0 0 100 100" fill="currentColor">
+        <circle cx="50" cy="25" r="20" />
+        <circle cx="74" cy="42" r="20" />
+        <circle cx="65" cy="70" r="20" />
+        <circle cx="35" cy="70" r="20" />
+        <circle cx="26" cy="42" r="20" />
+        <circle cx="50" cy="50" r="15" fill="#fff" className="opacity-60" />
+      </svg>
+      
+      {/* Sparkles / Bintang Kecil Pastel */}
+      <div className="absolute top-20 right-16 md:top-28 md:right-36 text-pink-400 text-3xl md:text-5xl opacity-40 animate-pulse pointer-events-none z-0 drop-shadow-sm">✦</div>
+      <div className="absolute bottom-24 left-16 md:bottom-32 md:left-36 text-rose-400 text-2xl md:text-4xl opacity-40 animate-[pulse_3s_infinite_1s] pointer-events-none z-0 drop-shadow-sm">✧</div>
+      
+      {/* Ornamen titik-titik (dot pattern) yang super soft */}
+      <div className="absolute top-12 right-12 md:top-24 md:right-32 w-24 h-24 md:w-32 md:h-32 opacity-[0.05] pointer-events-none z-0 animate-[pulse_4s_infinite]" style={{ backgroundImage: 'radial-gradient(#f472b6 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
+      <div className="absolute bottom-12 left-12 md:bottom-24 md:left-32 w-20 h-20 md:w-24 md:h-24 opacity-[0.05] pointer-events-none z-0 animate-[pulse_4s_infinite_1s]" style={{ backgroundImage: 'radial-gradient(#fb7185 2px, transparent 2px)', backgroundSize: '16px 16px' }} />
     </section>
   );
 }
