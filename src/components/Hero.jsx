@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 const slides = [
-  { desktop: '/images/hero/hero1.png', mobile: '/images/hero/heroM1.png' },
-  { desktop: '/images/hero/hero2.png', mobile: '/images/hero/heroM2.png' },
-  { desktop: '/images/hero/hero3.png', mobile: '/images/hero/heroM3.png' },
-  { desktop: '/images/hero/hero4.png', mobile: '/images/hero/heroM4.png' },
+  { desktop: 'https://res.cloudinary.com/dex2dr4zf/image/upload/v1778136626/hero1_tfoafq.webp', mobile: '/images/hero/heroM1.png' },
+  { desktop: 'https://res.cloudinary.com/dex2dr4zf/image/upload/v1778137557/hero2_xmkizz.webp', mobile: '/images/hero/heroM2.png' },
+  { desktop: 'https://res.cloudinary.com/dex2dr4zf/image/upload/v1778137565/hero3_dcilpl.webp', mobile: '/images/hero/heroM3.png' },
+  { desktop: 'https://res.cloudinary.com/dex2dr4zf/image/upload/v1778137551/hero4_pa1t3f.webp', mobile: '/images/hero/heroM4.png' },
 ];
 
 // Menambahkan slide terakhir di awal, dan slide pertama di akhir untuk infinite loop
@@ -67,7 +67,7 @@ export default function Hero() {
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
-    
+
     if (isLeftSwipe) {
       next();
     }
@@ -97,7 +97,7 @@ export default function Hero() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div 
+      <div
         className="relative w-full overflow-hidden"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -111,9 +111,9 @@ export default function Hero() {
           style={{ transform: `translateX(-${current * 100}%)` }}
         >
           {extendedSlides.map((slide, i) => (
-            <picture 
-              key={i} 
-              className="block w-full flex-shrink-0" 
+            <picture
+              key={i}
+              className="block w-full flex-shrink-0"
               style={{ width: '100%', minWidth: '100%' }}
             >
               <source media="(min-width: 768px)" srcSet={slide.desktop} />
@@ -167,11 +167,10 @@ export default function Hero() {
                 setIsTransitioning(true);
                 setCurrent(i + 1);
               }}
-              className={`rounded-full transition-all duration-300 ${
-                isActive 
-                  ? 'w-6 h-2 bg-rose-brand md:bg-white' 
-                  : 'w-2 h-2 bg-rose-brand/30 hover:bg-rose-brand/50 md:bg-white/50 md:hover:bg-white/80'
-              }`}
+              className={`rounded-full transition-all duration-300 ${isActive
+                ? 'w-6 h-2 bg-rose-brand md:bg-white'
+                : 'w-2 h-2 bg-rose-brand/30 hover:bg-rose-brand/50 md:bg-white/50 md:hover:bg-white/80'
+                }`}
               aria-label={`Slide ${i + 1}`}
             />
           );
