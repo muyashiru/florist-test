@@ -1,246 +1,235 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uncategorizedDir = path.join(__dirname, '../public/images/produk/uncategorized');
 const produkDir = path.join(__dirname, '../public/images/produk');
+const productsFile = path.join(__dirname, '../src/data/products.js');
 
-// Function to convert HEIC to WebP
-async function convertHeicToWebp(inputPath, outputPath) {
-  try {
-    await sharp(inputPath)
-      .webp({ quality: 85 })
-      .toFile(outputPath);
-    return true;
-  } catch (error) {
-    console.error(`❌ Conversion failed for ${path.basename(inputPath)}:`, error.message);
-    return false;
+// Map prefixes to categories and subdirectories
+const prefixMap = {
+  // Bouquet Artificial
+  'bap': { cat: 'Bouquet Artificial', sub: 'Petite', dir: 'bouquet-artificial/petite' },
+  'bas': { cat: 'Bouquet Artificial', sub: 'Small', dir: 'bouquet-artificial/s' },
+  'bam': { cat: 'Bouquet Artificial', sub: 'Medium', dir: 'bouquet-artificial/m' },
+  'bal': { cat: 'Bouquet Artificial', sub: 'Large', dir: 'bouquet-artificial/l' },
+  'baxl': { cat: 'Bouquet Artificial', sub: 'XL', dir: 'bouquet-artificial/xl' },
+  'baxxl': { cat: 'Bouquet Artificial', sub: 'XXL', dir: 'bouquet-artificial/xxl' },
+  'bahs': { cat: 'Bouquet Artificial', sub: 'Human Size', dir: 'bouquet-artificial/human-size' },
+
+  // Bouquet Fresh
+  'bfs': { cat: 'Fresh Flowers', sub: 'Small', dir: 'bouquet-fresh/s' },
+  'bfm': { cat: 'Fresh Flowers', sub: 'Medium', dir: 'bouquet-fresh/m' },
+  'bfl': { cat: 'Fresh Flowers', sub: 'Large', dir: 'bouquet-fresh/l' },
+  'bfxl': { cat: 'Fresh Flowers', sub: 'XL', dir: 'bouquet-fresh/xl' },
+  'bfp': { cat: 'Fresh Flowers', sub: 'Premium', dir: 'bouquet-fresh/premium' },
+  'bsf': { cat: 'Fresh Flowers', sub: 'Single Flower', dir: 'bouquet-fresh/single' },
+
+  // Bouquet Mix
+  'bfmam': { cat: 'Fresh Mix Artificial', sub: 'Medium', dir: 'bouquet-mix/m' },
+  'bfmal': { cat: 'Fresh Mix Artificial', sub: 'Large', dir: 'bouquet-mix/l' },
+  'bfmaxl': { cat: 'Fresh Mix Artificial', sub: 'XL', dir: 'bouquet-mix/xl' },
+
+  // Bloom Box & Vas
+  'blboxartif': { cat: 'Bloom Box & Vas', sub: 'Bloom Box Artificial', dir: 'bloom-box-vas' },
+  'blboxfresh': { cat: 'Bloom Box & Vas', sub: 'Bloom Box Fresh', dir: 'bloom-box-vas' },
+  'vaskacaartif': { cat: 'Bloom Box & Vas', sub: 'Vas Kaca Artificial', dir: 'bloom-box-vas' },
+  'vaskacafresh': { cat: 'Bloom Box & Vas', sub: 'Vas Kaca Fresh', dir: 'bloom-box-vas' },
+  'vaspetitearti': { cat: 'Bloom Box & Vas', sub: 'Vas Petite Artificial', dir: 'bloom-box-vas' },
+  'vaspetite': { cat: 'Bloom Box & Vas', sub: 'Vas Petite Artificial', dir: 'bloom-box-vas' },
+  'vasplasticmelaminartif': { cat: 'Bloom Box & Vas', sub: 'Vas Plastic Melamin Artificial', dir: 'bloom-box-vas' },
+
+  // Snack Bucket
+  'bsnack': { cat: 'Snack & Gift Bucket', sub: 'Snack', dir: 'snack-bucket' },
+
+  // Wedding Arrangement
+  'wedartifcar': { cat: 'Wedding Arrangement', sub: 'Wedding Car Artificial', dir: 'wedding-arrangement' },
+  'wedfreshcar': { cat: 'Wedding Arrangement', sub: 'Wedding Car Fresh', dir: 'wedding-arrangement' },
+  'wedartif': { cat: 'Wedding Arrangement', sub: 'Artificial', dir: 'wedding-arrangement' },
+  'wedfresh': { cat: 'Wedding Arrangement', sub: 'Fresh', dir: 'wedding-arrangement' },
+  'wedmix': { cat: 'Wedding Arrangement', sub: 'Mix', dir: 'wedding-arrangement' },
+  'wcartif': { cat: 'Wedding Arrangement', sub: 'Corsage Artificial', dir: 'wedding-arrangement' },
+  'wcfresh': { cat: 'Wedding Arrangement', sub: 'Corsage Fresh', dir: 'wedding-arrangement' },
+
+  // Custom / Gift
+  'bgradartif': { cat: 'Custom Bucket', sub: 'Graduation Artificial', dir: 'custom-bucket' },
+  'bgradfresh': { cat: 'Custom Bucket', sub: 'Graduation Fresh', dir: 'custom-bucket' },
+  'bgradsnack': { cat: 'Custom Bucket', sub: 'Graduation Snack', dir: 'custom-bucket' },
+  'blego': { cat: 'Custom Bucket', sub: 'Lego', dir: 'custom-bucket' },
+  'brokokartif': { cat: 'Custom Bucket', sub: 'Rokok', dir: 'custom-bucket' },
+  'bphotoartif': { cat: 'Custom Bucket', sub: 'Photo', dir: 'custom-bucket' },
+  'giftcustom': { cat: 'Custom Bucket', sub: 'Gift Custom', dir: 'custom-bucket' },
+  'bdried': { cat: 'Custom Bucket', sub: 'Dried', dir: 'custom-bucket' },
+
+  // Bucket Pipe
+  'bpipe': { cat: 'Bucket Pipe', sub: '', dir: 'bucket-pipe' }
+};
+
+function getPrefixInfo(filename) {
+  let lowerName = filename.toLowerCase().replace(/^salinan\s+/, '');
+  
+  // Special check for Money Bucket
+  const mbMatch = lowerName.match(/^(mb[afd]?)(\d+)?lbr/);
+  if (mbMatch) {
+    const type = mbMatch[1];
+    let sub = '';
+    if (type === 'mba') sub = 'Artificial';
+    else if (type === 'mbf') sub = 'Fresh';
+    else if (type === 'mbd') sub = 'Dried';
+    else sub = 'Custom';
+    
+    return {
+      sku: mbMatch[0], 
+      cat: 'Money Bucket',
+      sub: sub,
+      dir: 'money-bucket'
+    };
   }
+
+  // Find longest matching prefix
+  const prefixes = Object.keys(prefixMap).sort((a, b) => b.length - a.length);
+  for (const prefix of prefixes) {
+    if (lowerName.startsWith(prefix)) {
+      return { sku: prefix, ...prefixMap[prefix] };
+    }
+  }
+
+  return null;
 }
 
-// Main async function to organize files
+function parsePrice(filename) {
+  const match = filename.match(/harga\s*([\d,\.]+[kK])/i);
+  if (match) {
+    let priceStr = match[1].toLowerCase().replace('k', '');
+    priceStr = priceStr.replace(',', '.'); 
+    const num = parseFloat(priceStr);
+    if (!isNaN(num)) {
+      return num * 1000;
+    }
+  }
+  return 0; // 0 artinya Custom atau Ask Admin
+}
+
 async function organizeProducts() {
-  // Read all files from uncategorized
-  const files = fs.readdirSync(uncategorizedDir).filter(f => {
-    const stats = fs.statSync(path.join(uncategorizedDir, f));
-    return stats.isFile() && !f.startsWith('.'); // Exclude hidden files and directories
-  });
+  console.log("🚀 Starting organization and code generation...");
 
-  console.log(`📁 Found ${files.length} files to organize...\n`);
-
-  const products = [];
-
-  // Process each file
-  for (const filename of files) {
-    // Handle files with and without extensions
-    const match = filename.match(/^([A-Za-z]+)_(\d+)(?:_|\s)(.*?)(?:\.jpg|\.png|\.jpeg|\.heic)?$/i);
-    
-    if (!match) {
-      console.warn(`⚠️  Skipping: ${filename} (invalid format)`);
-      continue;
-    }
-
-    const [fullMatch, prefix, number, rest] = match;
-    
-    // Extract price - handle various formats
-    const priceMatch = rest.match(/(?:Harga|harga)?\s*(\d+)\s*k/i);
-    const price = priceMatch ? parseInt(priceMatch[1]) * 1000 : 0;
-    
-    // Check if file is HEIC
-    const isHeic = filename.toLowerCase().endsWith('.heic');
-    const baseFilename = isHeic ? filename.replace(/\.heic$/i, '') : filename;
-    const finalFilename = isHeic ? `${baseFilename}.webp` : filename;
-
-    let category, size, categoryName, destinationDir, productType;
-    
-    // Map prefix to category and size
-    if (prefix.toLowerCase() === 'bap') {
-      category = 'bouquet-artificial';
-      size = 'Petite';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/petite');
-    } else if (prefix.toLowerCase() === 'bas') {
-      category = 'bouquet-artificial';
-      size = 'S';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/s');
-    } else if (prefix.toLowerCase() === 'bam') {
-      category = 'bouquet-artificial';
-      size = 'M';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/m');
-    } else if (prefix.toLowerCase() === 'bal') {
-      category = 'bouquet-artificial';
-      size = 'L';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/l');
-    } else if (prefix.toLowerCase() === 'baxl') {
-      category = 'bouquet-artificial';
-      size = 'XL';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/xl');
-    } else if (prefix.toLowerCase() === 'baxxl') {
-      category = 'bouquet-artificial';
-      size = 'XXL';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/xxl');
-    } else if (prefix.toLowerCase() === 'bahs') {
-      category = 'bouquet-artificial';
-      size = 'Human Size';
-      categoryName = 'Bouquet Artificial';
-      productType = 'bouquet-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-artificial/human-size');
-    } else if (prefix.toLowerCase() === 'bfs') {
-      category = 'bouquet-fresh';
-      size = 'S';
-      categoryName = 'Bouquet Fresh';
-      productType = 'bouquet-fresh';
-      destinationDir = path.join(produkDir, 'bouquet-fresh/s');
-    } else if (prefix.toLowerCase() === 'bfm' && !filename.toLowerCase().includes('bfma')) {
-      category = 'bouquet-fresh';
-      size = 'M';
-      categoryName = 'Bouquet Fresh';
-      productType = 'bouquet-fresh';
-      destinationDir = path.join(produkDir, 'bouquet-fresh/m');
-    } else if (prefix.toLowerCase() === 'bfl') {
-      category = 'bouquet-fresh';
-      size = 'L';
-      categoryName = 'Bouquet Fresh';
-      productType = 'bouquet-fresh';
-      destinationDir = path.join(produkDir, 'bouquet-fresh/l');
-    } else if (prefix.toLowerCase() === 'bfxl') {
-      category = 'bouquet-fresh';
-      size = 'XL';
-      categoryName = 'Bouquet Fresh';
-      productType = 'bouquet-fresh';
-      destinationDir = path.join(produkDir, 'bouquet-fresh/xl');
-    } else if (prefix.toLowerCase() === 'bfp') {
-      category = 'bouquet-fresh';
-      size = 'Premium';
-      categoryName = 'Bouquet Fresh';
-      productType = 'bouquet-fresh';
-      destinationDir = path.join(produkDir, 'bouquet-fresh/premium');
-    } else if (prefix.toLowerCase() === 'bfmam') {
-      category = 'bouquet-fresh-mix-artificial';
-      size = 'M';
-      categoryName = 'Bouquet Fresh Mix Artificial';
-      productType = 'bouquet-fresh-mix-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-fresh-mix-artificial/m');
-    } else if (prefix.toLowerCase() === 'bfmal') {
-      category = 'bouquet-fresh-mix-artificial';
-      size = 'L';
-      categoryName = 'Bouquet Fresh Mix Artificial';
-      productType = 'bouquet-fresh-mix-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-fresh-mix-artificial/l');
-    } else if (prefix.toLowerCase() === 'bfmaxl') {
-      category = 'bouquet-fresh-mix-artificial';
-      size = 'XL';
-      categoryName = 'Bouquet Fresh Mix Artificial';
-      productType = 'bouquet-fresh-mix-artificial';
-      destinationDir = path.join(produkDir, 'bouquet-fresh-mix-artificial/xl');
-    } else if (prefix.toLowerCase().includes('blboxartif')) {
-      category = 'bloom-box-artificial';
-      categoryName = 'Bloom Box Artificial';
-      productType = 'bloom-box-artificial';
-      if (filename.toLowerCase().includes('m')) {
-        size = 'M';
-        destinationDir = path.join(produkDir, 'bloom-box-artificial/m');
+  // 1. Delete old .jpg and .png files to clean up
+  const deleteOldImages = (dir) => {
+    if (dir.includes('uncategorized')) return;
+    if (!fs.existsSync(dir)) return;
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const itemPath = path.join(dir, item);
+      if (fs.statSync(itemPath).isDirectory()) {
+        deleteOldImages(itemPath);
       } else {
-        size = 'S';
-        destinationDir = path.join(produkDir, 'bloom-box-artificial/s');
-      }
-    } else if (prefix.toLowerCase().includes('vasplastic')) {
-      category = 'vas-artificial';
-      categoryName = 'Vas Plastic Melamin Artificial';
-      productType = 'vas-artificial';
-      size = 'S'; // Default
-      destinationDir = path.join(produkDir, 'vas-artificial');
-    } else {
-      console.warn(`⚠️  Skipping: ${filename} (unknown prefix: ${prefix})`);
-      continue;
-    }
-
-    try {
-      const sourcePath = path.join(uncategorizedDir, filename);
-      const destPath = path.join(destinationDir, finalFilename);
-      
-      // If HEIC, convert to WebP first
-      if (isHeic) {
-        const converted = await convertHeicToWebp(sourcePath, destPath);
-        if (!converted) {
-          console.warn(`⚠️  Failed to convert ${filename}, skipping`);
-          continue;
+        const ext = path.extname(item).toLowerCase();
+        if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+          fs.unlinkSync(itemPath);
+          console.log(`🗑️ Deleted old file: ${itemPath}`);
         }
-        console.log(`✅ ${filename} → ${size} (converted to WebP)`);
-      } else {
-        // Just move non-HEIC files
-        fs.renameSync(sourcePath, destPath);
-        console.log(`✅ ${filename} → ${size}`);
       }
-      
-      // Determine image path for products.js
-      const normalizedSize = size.toLowerCase().replace(/\s+/g, '-');
-      const imagePath = `/images/produk/${productType}/${normalizedSize}/${finalFilename}`;
-      
-      const productId = `${prefix.toUpperCase()}-${number.padStart(3, '0')}`;
-      
-      const product = {
-        id: productId,
-        name: `${categoryName} ${size}`,
-        category: productType,
-        size: size,
-        price: price,
-        image: imagePath,
-        description: `Rangkaian bunga ${categoryName.toLowerCase()} ukuran ${size} dari Jalé Florist. Cantik, tahan lama, dan cocok untuk berbagai momen spesial.`,
-        available: true,
-      };
-
-      products.push(product);
-    } catch (err) {
-      console.error(`❌ Error processing ${filename}:`, err.message);
     }
+  };
+  deleteOldImages(produkDir);
+
+  // 2. Process uncategorized files (Move them)
+  const filesToMove = fs.existsSync(uncategorizedDir) ? fs.readdirSync(uncategorizedDir).filter(f => f.toLowerCase().endsWith('.webp')) : [];
+  
+  let unknownCount = 0;
+
+  for (const file of filesToMove) {
+    const info = getPrefixInfo(file);
+    if (!info) {
+      console.warn(`⚠️ Skipped (Unknown prefix): ${file}`);
+      unknownCount++;
+      continue;
+    }
+
+    const cleanFilename = file.replace(/^Salinan\s+/i, '');
+    const sourcePath = path.join(uncategorizedDir, file);
+    const targetDirPath = path.join(produkDir, info.dir);
+    const targetPath = path.join(targetDirPath, cleanFilename);
+
+    if (!fs.existsSync(targetDirPath)) {
+      fs.mkdirSync(targetDirPath, { recursive: true });
+    }
+
+    // Move file
+    fs.renameSync(sourcePath, targetPath);
   }
 
-  // Fix duplicate IDs - add suffix if duplicate found
-  const idCount = {};
-  const productsWithUniqueIds = [];
-  products.forEach((product) => {
-    let finalId = product.id;
-    if (!idCount[product.id]) {
-      idCount[product.id] = 1;
-    } else {
-      idCount[product.id]++;
-      finalId = `${product.id}-${idCount[product.id]}`;
+  // 3. Scan all files in produkDir to generate catalog
+  const productsList = [];
+  const scanCatalog = (dir) => {
+    if (dir.includes('uncategorized')) return;
+    if (!fs.existsSync(dir)) return;
+    const items = fs.readdirSync(dir);
+    for (const item of items) {
+      const itemPath = path.join(dir, item);
+      if (fs.statSync(itemPath).isDirectory()) {
+        scanCatalog(itemPath);
+      } else if (item.toLowerCase().endsWith('.webp')) {
+        const info = getPrefixInfo(item);
+        if (info) {
+          const price = parsePrice(item);
+          const idMatch = item.match(/^([A-Za-z0-9]+_\d+)/);
+          const id = idMatch ? idMatch[1] : item.replace('.webp', '');
+          const codeNumber = id.includes('_') ? id.split('_')[1] : '';
+          
+          let name = `${info.cat}`;
+          if (info.sub) name += ` ${info.sub}`;
+          if (codeNumber) name += ` ${codeNumber}`;
+
+          // Relative path for web
+          const relativePath = '/images/produk/' + path.relative(produkDir, itemPath).replace(/\\/g, '/');
+
+          productsList.push({
+            id: id,
+            name: name,
+            category: info.cat,
+            size: info.sub || "Custom",
+            price: price,
+            image: relativePath,
+            isPopular: false, 
+          });
+        }
+      }
     }
-    product.id = finalId;
-    productsWithUniqueIds.push(product);
-  });
+  };
 
-  // Sort products by category and ID
-  productsWithUniqueIds.sort((a, b) => {
-    if (a.category !== b.category) return a.category.localeCompare(b.category);
-    return a.id.localeCompare(b.id);
-  });
+  scanCatalog(produkDir);
 
-  // Save to JSON file for reference
-  const outputPath = path.join(__dirname, '../src/data/products-new.json');
-  fs.writeFileSync(outputPath, JSON.stringify(productsWithUniqueIds, null, 2));
+  // Gather unique sizes
+  const uniqueSizes = [...new Set(productsList.map(p => p.size))].filter(Boolean);
 
-  console.log(`\n✨ Organization complete!`);
-  console.log(`📊 Total products: ${productsWithUniqueIds.length}`);
-  console.log(`💾 Data saved to: src/data/products-new.json`);
+  // 4. Generate products.js
+  const jsContent = `// File ini di-generate secara otomatis oleh scripts/organize-and-generate-products.mjs
+
+export const products = ${JSON.stringify(productsList, null, 2)};
+
+export const categories = [
+  { id: "all", label: "Semua Kategori" },
+  { id: "Bouquet Artificial", label: "Bouquet Artificial" },
+  { id: "Fresh Flowers", label: "Fresh Flowers" },
+  { id: "Fresh Mix Artificial", label: "Fresh Mix Artificial" },
+  { id: "Bloom Box & Vas", label: "Bloom Box & Vas" },
+  { id: "Money Bucket", label: "Money Bucket" },
+  { id: "Wedding Arrangement", label: "Wedding Arrangement" },
+  { id: "Snack & Gift Bucket", label: "Snack & Gift Bucket" },
+  { id: "Bucket Pipe", label: "Bucket Pipe" },
+  { id: "Custom Bucket", label: "Custom Bucket" }
+];
+
+export const sizes = ${JSON.stringify(uniqueSizes, null, 2)};
+`;
+
+  fs.writeFileSync(productsFile, jsContent);
+  console.log(`\n✅ Selesai! Berhasil meng-generate ${productsList.length} data produk di products.js.`);
+  if (unknownCount > 0) {
+    console.log(`⚠️ Ada ${unknownCount} file baru yang dilewati karena kodenya tidak dikenali.`);
+  }
 }
 
-// Run the main function
-organizeProducts().catch(err => {
-  console.error('Fatal error:', err.message);
-  process.exit(1);
-});
+organizeProducts();
