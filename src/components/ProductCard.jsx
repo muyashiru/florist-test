@@ -23,8 +23,8 @@ export default function ProductCard({ product, onClick }) {
       </div>
 
       {/* Info */}
-      <div className="px-1">
-        <p className="text-xs text-muted mb-0.5">{product.id}</p>
+      <div className="px-1 overflow-hidden">
+        <p className="text-xs text-muted mb-0.5 truncate">{product.id}</p>
         <h3 className="text-sm font-medium text-charcoal leading-tight truncate">{product.name}</h3>
         <p className="text-rose-brand font-semibold text-sm mt-1">
           {formatPrice(product.price)}

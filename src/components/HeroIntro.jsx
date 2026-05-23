@@ -4,7 +4,7 @@ import SectionBackground from './SectionBackground';
 
 export default function HeroIntro() {
   return (
-    <section className="bg-cream py-16 md:py-20 border-b border-sand/40 relative overflow-hidden">
+    <section className="bg-cream pt-16 pb-10 md:pt-20 md:pb-12 border-b border-sand/40 relative overflow-hidden">
       <SectionBackground variant="intro" />
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         {/* Eyebrow */}

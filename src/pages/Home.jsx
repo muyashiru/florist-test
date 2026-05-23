@@ -1,7 +1,7 @@
 import Hero from '../components/Hero';
 import ProductMarquee from '../components/ProductMarquee';
 import HeroIntro from '../components/HeroIntro';
-import Features from '../components/Features';
+import Pricelist from '../components/Pricelist';
 import HighlightProduct from '../components/HighlightProduct';
 import InstagramPromo from '../components/InstagramPromo';
 import CategoryShowcase from '../components/CategoryShowcase';
@@ -13,7 +13,7 @@ export default function Home() {
       <Hero />
       <ProductMarquee />
       <HeroIntro />
-      <Features />
+      <Pricelist />
       <HighlightProduct />
       <InstagramPromo />
       <CategoryShowcase />

@@ -46,8 +46,8 @@ export default function Navbar() {
         <nav className={`max-w-7xl mx-auto px-6 h-16 flex items-center ${MOBILE_NAV_STYLE === 3 || MOBILE_NAV_STYLE === 4 || MOBILE_NAV_STYLE === 5 ? 'justify-between' : 'md:justify-between justify-center'
           }`}>
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Jalé Florist" className="h-14 w-auto object-contain" />
+          <Link to="/" className={`flex items-center gap-2 transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-0 opacity-0 md:w-auto md:opacity-100 md:overflow-visible' : 'w-[130px] md:w-auto opacity-100 md:overflow-visible'}`}>
+            <img src="/logo.png" alt="Jalé Florist" className="h-14 w-auto object-contain min-w-[130px]" />
           </Link>
 
           {/* Desktop Nav (Tetap sama untuk semua gaya) */}
@@ -89,13 +89,13 @@ export default function Navbar() {
           <div className="flex items-center gap-2 md:gap-4">
             {/* Tombol Search (Expandable) */}
             <div className="relative flex items-center">
-              <form 
-                onSubmit={handleSearch} 
-                className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${isSearchOpen ? 'w-44 md:w-56 opacity-100' : 'w-0 opacity-0'}`}
+              <form
+                onSubmit={handleSearch}
+                className={`flex items-center overflow-hidden transition-all duration-300 ease-in-out ${isSearchOpen ? 'w-[calc(100vw-110px)] sm:w-[350px] md:w-64 opacity-100' : 'w-0 opacity-0'}`}
               >
                 <input
                   type="text"
-                  placeholder="Cari (misal: BAP)..."
+                  placeholder="Cari (misal: Bloombox.. )"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full bg-white/80 backdrop-blur-sm border border-rose-brand/30 rounded-full py-1.5 pl-4 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-rose-brand/50"
