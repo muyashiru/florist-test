@@ -407,7 +407,7 @@ export default function HighlightProduct() {
                   {selectedProduct.name.toLowerCase().includes('artificial') ? (
                     <li>Bunga artificial (palsu) premium yang awet selamanya</li>
                   ) : (
-                    <li>Bunga segar berkualitas premium</li>
+                    <li>Bunga Artificial berkualitas premium</li>
                   )}
                   <li>Tersedia opsi custom warna & ukuran</li>
                   <li>Pengiriman aman se-Bandung Raya</li>
