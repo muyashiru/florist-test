@@ -13,7 +13,10 @@ export const generateOrderLink = (product) => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
   const encodedImagePath = encodeURI(product.image || '');
   const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${encodedImagePath}`;
-  const msg = `Halo Jalé Florist, saya tertarik memesan ${product.name} (Kode: ${product.id}) seharga ${formatPrice(product.price)}. Apakah masih tersedia?\n\nFoto Referensi: ${imageUrl}`;
+  
+  const previewUrl = `${baseUrl}/api/preview?title=${encodeURIComponent(product.name)}&desc=${encodeURIComponent('Harga: ' + formatPrice(product.price))}&img=${encodeURIComponent(imageUrl)}`;
+
+  const msg = `Halo Jalé Florist, saya tertarik memesan ${product.name} (Kode: ${product.id}) seharga ${formatPrice(product.price)}. Apakah masih tersedia?\n\nInfo Produk: ${previewUrl}`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 };
 
