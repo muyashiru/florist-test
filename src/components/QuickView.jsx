@@ -45,10 +45,14 @@ export default function QuickView({ product, onClose }) {
   const generateLinkWithAddons = () => {
     const phoneNumber = "6281367931303";
 
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${product.image}`;
+
     let text = `Halo admin Jalé Florist, saya ingin memesan produk berikut:\n\n`;
     text += `*Produk:* ${product.name}\n`;
     text += `*Kode:* ${product.id}\n`;
-    text += `*Harga Dasar:* ${formatPrice(product.price)}\n\n`;
+    text += `*Harga Dasar:* ${formatPrice(product.price)}\n`;
+    text += `*Foto Referensi:* ${imageUrl}\n\n`;
 
     const selectedAddons = Object.entries(addons).filter(([_, qty]) => qty > 0);
 

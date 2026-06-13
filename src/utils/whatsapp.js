@@ -10,7 +10,9 @@ export const formatPrice = (price) => {
 };
 
 export const generateOrderLink = (product) => {
-  const msg = `Halo Jalé Florist, saya tertarik memesan ${product.name} (Kode: ${product.id}) seharga ${formatPrice(product.price)}. Apakah masih tersedia?`;
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const imageUrl = product.image.startsWith('http') ? product.image : `${baseUrl}${product.image}`;
+  const msg = `Halo Jalé Florist, saya tertarik memesan ${product.name} (Kode: ${product.id}) seharga ${formatPrice(product.price)}. Apakah masih tersedia?\n\nFoto Referensi: ${imageUrl}`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 };
 
