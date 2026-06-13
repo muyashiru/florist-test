@@ -46,7 +46,8 @@ export default function QuickView({ product, onClose }) {
     const phoneNumber = "6281367931303";
 
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
-    const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${product.image}`;
+    const encodedImagePath = encodeURI(product.image || '');
+    const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${encodedImagePath}`;
 
     let text = `Halo admin Jalé Florist, saya ingin memesan produk berikut:\n\n`;
     text += `*Produk:* ${product.name}\n`;
