@@ -4,13 +4,7 @@ export default function handler(req, res) {
   const ogTitle = title || "Jalé Florist";
   const ogDesc = desc || "Bloom with meaning, delivered with love.";
   // Default image jika tidak ada
-  let ogImg = img || "https://florist-test.vercel.app/logo.png";
-
-  // WhatsApp TIDAK mensupport format .webp untuk Open Graph preview.
-  // Oleh karena itu, kita ubah secara on-the-fly menjadi format .jpg menggunakan image proxy gratis (wsrv.nl)
-  if (ogImg.includes('.webp')) {
-    ogImg = `https://wsrv.nl/?url=${encodeURIComponent(ogImg)}&output=jpg&w=600&q=80`;
-  }
+  const ogImg = img || "https://florist-test.vercel.app/logo.png";
 
   const html = `
     <!DOCTYPE html>
