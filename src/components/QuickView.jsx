@@ -49,7 +49,7 @@ export default function QuickView({ product, onClose }) {
     const encodedImagePath = encodeURI(product.image || '');
     const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${encodedImagePath}`;
 
-    const previewUrl = `${baseUrl}/api/preview?id=${product.id}&title=${encodeURIComponent(product.name)}&desc=${encodeURIComponent('Harga Dasar: ' + formatPrice(product.price))}&img=${encodeURIComponent(imageUrl)}`;
+    const previewUrl = `${baseUrl}/api/preview?id=${product.id}`;
 
     let text = `Halo admin Jalé Florist, saya ingin memesan produk berikut:\n\n`;
     text += `*Produk:* ${product.name}\n`;

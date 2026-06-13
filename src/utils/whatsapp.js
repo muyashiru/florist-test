@@ -14,7 +14,7 @@ export const generateOrderLink = (product) => {
   const encodedImagePath = encodeURI(product.image || '');
   const imageUrl = product.image?.startsWith('http') ? product.image : `${baseUrl}${encodedImagePath}`;
   
-  const previewUrl = `${baseUrl}/api/preview?id=${product.id}&title=${encodeURIComponent(product.name)}&desc=${encodeURIComponent('Harga: ' + formatPrice(product.price))}&img=${encodeURIComponent(imageUrl)}`;
+  const previewUrl = `${baseUrl}/api/preview?id=${product.id}`;
 
   const msg = `Halo Jalé Florist, saya tertarik memesan ${product.name} (Kode: ${product.id}) seharga ${formatPrice(product.price)}. Apakah masih tersedia? Terima kasih!\n\nLink Produk: ${previewUrl}`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;

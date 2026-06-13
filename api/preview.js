@@ -1,10 +1,33 @@
+import { products } from '../src/data/products.js';
+
 export default function handler(req, res) {
-  const { id, title, desc, img } = req.query;
+  const { id } = req.query;
   
-  const ogTitle = title || "Jalé Florist";
-  const ogDesc = desc || "Bloom with meaning, delivered with love.";
-  // Default image jika tidak ada
-  const ogImg = img || "https://florist-test.vercel.app/logo.png";
+  let ogTitle = "Jalé Florist";
+  let ogDesc = "Bloom with meaning, delivered with love.";
+  let ogImg = "https://florist-test.vercel.app/logo.png";
+
+  if (id) {
+    const product = products.find(p => p.id === id);
+    if (product) {
+      ogTitle = product.name;
+      
+      const formatPrice = (price) => {
+        if (price === 0) return "Ask admin for price";
+        return new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          minimumFractionDigits: 0,
+        }).format(price);
+      };
+      
+      ogDesc = `Harga: ${formatPrice(product.price)}`;
+      
+      const baseUrl = "https://florist-test.vercel.app";
+      const encodedImagePath = encodeURI(product.image || '');
+      ogImg = product.image?.startsWith('http') ? product.image : `${baseUrl}${encodedImagePath}`;
+    }
+  }
   
   const redirectUrl = `https://florist-test.vercel.app/catalog${id ? `?open=${id}` : ''}`;
 
