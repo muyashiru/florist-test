@@ -77,7 +77,19 @@ export default function Catalog() {
         setSearchQuery(location.state.searchQuery);
       }
     }
-  }, [location.state]);
+
+    // Cek apakah ada parameter "?open=ID_PRODUK" dari URL (misal dari link WhatsApp)
+    const searchParams = new URLSearchParams(location.search);
+    const openId = searchParams.get('open');
+    if (openId) {
+      const productToOpen = products.find(p => p.id === openId);
+      if (productToOpen) {
+        setSelectedProduct(productToOpen);
+        // Hapus param dari URL tanpa me-refresh halaman agar rapi
+        window.history.replaceState({}, '', '/catalog');
+      }
+    }
+  }, [location.state, location.search]);
 
   // Reset jumlah yang ditampilkan saat filter diganti
   useEffect(() => {
