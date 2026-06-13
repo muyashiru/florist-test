@@ -54,8 +54,7 @@ export default function QuickView({ product, onClose }) {
     let text = `Halo admin Jalé Florist, saya ingin memesan produk berikut:\n\n`;
     text += `*Produk:* ${product.name}\n`;
     text += `*Kode:* ${product.id}\n`;
-    text += `*Harga Dasar:* ${formatPrice(product.price)}\n`;
-    text += `*Info Produk:* ${previewUrl}\n\n`;
+    text += `*Harga Dasar:* ${formatPrice(product.price)}\n\n`;
 
     const selectedAddons = Object.entries(addons).filter(([_, qty]) => qty > 0);
 
@@ -67,6 +66,7 @@ export default function QuickView({ product, onClose }) {
           text += `- ${qty}x ${item.name} (${formatPrice(item.price * qty)})\n`;
         }
       });
+      text += `\n`;
     }
 
     const displayTotalWA = product.price === 0 
@@ -74,7 +74,8 @@ export default function QuickView({ product, onClose }) {
       : formatPrice(totalPrice);
 
     text += `*Total Harga:* ${displayTotalWA}\n\n`;
-    text += `Mohon info ketersediaan dan total biaya ongkirnya ya. Terima kasih!`;
+    text += `Mohon info ketersediaan dan total biaya ongkirnya ya. Terima kasih!\n\n`;
+    text += `Link Produk: ${previewUrl}`;
 
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(text)}`;
   };
